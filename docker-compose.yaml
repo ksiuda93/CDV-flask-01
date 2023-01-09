@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0.31
+    container_name: cdv-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: app
+      MYSQL_USER: cdv-app
+      MYSQL_PASSWORD: tajneHaslo123
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOSTS: db
+
+volumes:
+  mysql-data:
