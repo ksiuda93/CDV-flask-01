@@ -1,6 +1,7 @@
 from . import Blueprint, jsonify, request
 from models.User import User, UserSchema
 from flask_jwt import jwt_required, current_identity
+from services import redis_handler, rabbit_handler
 
 user_bp = Blueprint('user', __name__)
 users = []
@@ -21,8 +22,14 @@ def hello_user():
 @user_bp.post("/user")
 def add_user():
     user = User(**request.get_json())
-    user.add_user()
-    return jsonify(request.get_json()), 201
+    if user.add_user():
+        data = request.get_json()
+        email = data['email']
+        redis_handler.create_msg('api-email', email)
+        rabbit_handler.create_msg('pl-api-email', email)
+        return jsonify(request.get_json()), 201
+    else:
+        return jsonify({"Error": "Endpoint error!"}), 404
 
 
 @user_bp.delete("/user/<int:user_id>")
