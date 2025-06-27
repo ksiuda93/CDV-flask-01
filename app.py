@@ -24,7 +24,6 @@ app.config.update(
     CACHE_REDIS_URL="redis://127.0.0.1:6379/1"
 )
 db.init_app(app)
-db.init_app(app)
 ma.init_app(app)
 bc.init_app(app)
 cache = Cache(app)
